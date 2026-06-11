@@ -167,7 +167,8 @@ class LinkerFlow_REST_Posts {
 			);
 		}
 
-		$revision    = array_shift( wp_get_post_revisions( $id ) );
+		$revisions   = wp_get_post_revisions( $id );
+		$revision    = $revisions ? array_shift( $revisions ) : null;
 		$revision_id = $revision ? $revision->ID : null;
 
 		return rest_ensure_response(
@@ -195,10 +196,13 @@ class LinkerFlow_REST_Posts {
 		return null;
 	}
 
+	// Returns the post's language code (Polylang/WPML slug) or null on a monolingual
+	// site. Null, not get_locale(): LinkerFlow has no locale rows for a monolingual site,
+	// and a "en_US"-style code would never match, so every post must read as primary.
 	private function get_locale( int $post_id ) {
 		if ( function_exists( 'pll_get_post_language' ) ) {
 			$lang = pll_get_post_language( $post_id, 'slug' );
-			return $lang ?: get_locale();
+			return $lang ?: null;
 		}
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
@@ -208,7 +212,7 @@ class LinkerFlow_REST_Posts {
 			}
 		}
 
-		return get_locale();
+		return null;
 	}
 
 	private function get_supported_post_types() {
