@@ -1,11 +1,11 @@
 <?php
 /**
  * Plugin Name: LinkerFlow
- * Plugin URI:  https://linkerflow.io
+ * Plugin URI:  https://www.linkerflow.io
  * Description: Connect your WordPress site to LinkerFlow for automated internal linking.
  * Version:     1.0.0
  * Author:      LinkerFlow
- * Author URI:  https://linkerflow.io
+ * Author URI:  https://www.linkerflow.io
  * License:     GPL-2.0-or-later
  * Text Domain: linkerflow
  * Requires at least: 6.5

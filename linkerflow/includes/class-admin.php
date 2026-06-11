@@ -12,6 +12,7 @@ class LinkerFlow_Admin {
 	public static function init() {
 		add_action( 'admin_menu', array( __CLASS__, 'add_menu' ) );
 		add_action( 'admin_init', array( __CLASS__, 'handle_connect_action' ) );
+		add_filter( 'plugin_row_meta', array( __CLASS__, 'open_plugin_site_in_new_tab' ), 10, 4 );
 	}
 
 	public static function add_menu() {
@@ -42,6 +43,26 @@ class LinkerFlow_Admin {
 			<?php endif; ?>
 		</div>
 		<?php
+	}
+
+	public static function open_plugin_site_in_new_tab( $plugin_meta, $plugin_file, $plugin_data, $status ) {
+		if ( plugin_basename( LINKERFLOW_DIR . 'linkerflow.php' ) !== $plugin_file ) {
+			return $plugin_meta;
+		}
+
+		foreach ( $plugin_meta as $index => $meta ) {
+			if ( false === strpos( $meta, 'href="https://www.linkerflow.io"' ) ) {
+				continue;
+			}
+
+			$plugin_meta[ $index ] = str_replace(
+				'<a href="https://www.linkerflow.io"',
+				'<a target="_blank" rel="noopener noreferrer" href="https://www.linkerflow.io"',
+				$meta
+			);
+		}
+
+		return $plugin_meta;
 	}
 
 	public static function handle_connect_action() {
