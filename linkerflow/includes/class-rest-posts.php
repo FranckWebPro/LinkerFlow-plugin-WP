@@ -28,9 +28,9 @@ class LinkerFlow_REST_Posts {
 				'permission_callback' => array( 'LinkerFlow_Auth', 'permission_callback' ),
 				'args'                => array(
 					'post_type' => array(
-						'required' => false,
-						'type'     => 'string',
-						'default'  => 'post',
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_key',
 					),
 				),
 			)
@@ -114,9 +114,16 @@ class LinkerFlow_REST_Posts {
 	}
 
 	public function count_posts( WP_REST_Request $request ) {
-		$post_type = sanitize_key( $request->get_param( 'post_type' ) );
-		$counts    = wp_count_posts( $post_type );
-		$published = isset( $counts->publish ) ? (int) $counts->publish : 0;
+		$post_type  = sanitize_key( $request->get_param( 'post_type' ) );
+		$post_types = $post_type ? array( $post_type ) : $this->get_supported_post_types();
+		$published  = 0;
+
+		foreach ( $post_types as $type ) {
+			$counts = wp_count_posts( $type );
+			if ( isset( $counts->publish ) ) {
+				$published += (int) $counts->publish;
+			}
+		}
 
 		return rest_ensure_response( array( 'published' => $published ) );
 	}
@@ -202,6 +209,19 @@ class LinkerFlow_REST_Posts {
 		}
 
 		return get_locale();
+	}
+
+	private function get_supported_post_types() {
+		$post_types = get_post_types( array( 'public' => true ), 'names' );
+
+		return array_values(
+			array_filter(
+				$post_types,
+				function ( $post_type ) {
+					return 'attachment' !== $post_type;
+				}
+			)
+		);
 	}
 
 	private function list_args() {

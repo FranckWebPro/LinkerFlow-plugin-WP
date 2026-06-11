@@ -156,6 +156,8 @@ Response `200` (array; pagination in headers):
 
 Page-builder behavior: items managed by an unsupported page builder (detected via markers such as `_elementor_data` or `et_pb_`) are excluded from results and reported with a reason, so the rest of the site still ingests.
 
+Meta description: not yet returned. A planned follow-up will have the plugin expose the available meta-description sources per post (Yoast `_yoast_wpseo_metadesc`, Rank Math `rank_math_description`, or the excerpt) so onboarding can let the user pick the source per post type, mirroring the Webflow/Wix meta-description field selection. Until then LinkerFlow stores a null meta description for WordPress pages.
+
 ### GET /count
 
 Returns the aggregated count of published items, computed in a single call (`wp_count_posts`), so LinkerFlow does not page through everything just to size the site.
