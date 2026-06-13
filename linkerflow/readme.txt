@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 6.5
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,6 +72,11 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
 
 == Changelog ==
+
+= 1.1.0 =
+
+* Expose detected meta-description sources (Yoast SEO, Rank Math, excerpt) on the post-types endpoint.
+* Return a per-post meta description on the posts endpoint, resolved from the selected source with an excerpt fallback.
 
 = 1.0.0 =
 

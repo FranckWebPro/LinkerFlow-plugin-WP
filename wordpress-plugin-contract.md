@@ -91,6 +91,8 @@ This is the only unauthenticated endpoint (it bootstraps the credential); it is 
 
 Lists the public content types available to manage. Used by LinkerFlow onboarding so the user can choose what to connect.
 
+The response also reports `meta_sources`: the meta-description sources detected on the site. SEO plugins store the description per post site-wide, so onboarding surfaces a single meta-source selector rather than a per-collection field. `yoast` is present when Yoast SEO is active (`WPSEO_VERSION`), `rankmath` when Rank Math is active (`RANK_MATH_VERSION`), and `excerpt` is always offered last. SEO plugins are listed first so the first entry is the sensible default.
+
 Response `200`:
 
 ```json
@@ -99,6 +101,10 @@ Response `200`:
     { "slug": "post", "label": "Posts" },
     { "slug": "page", "label": "Pages" },
     { "slug": "portfolio", "label": "Portfolio" }
+  ],
+  "meta_sources": [
+    { "slug": "yoast", "label": "Yoast SEO" },
+    { "slug": "excerpt", "label": "Excerpt" }
   ]
 }
 ```
@@ -136,6 +142,7 @@ Query params:
 | `per_page` | no | Items per page. |
 | `status` | no | Always `publish`; other statuses and password-protected posts are excluded. |
 | `modified_after` | no | ISO datetime; returns only items with `post_modified` newer than this (incremental crawl). |
+| `meta_source` | no | A slug from `meta_sources` (`yoast`, `rankmath`, `excerpt`). Selects which field each item's `meta_description` is read from. Omitted = `meta_description` is null. |
 
 Response `200` (array; pagination in headers):
 
@@ -149,14 +156,15 @@ Response `200` (array; pagination in headers):
     "status": "publish",
     "locale": "fr",
     "post_content": "<!-- wp:paragraph --><p>...</p><!-- /wp:paragraph -->",
-    "post_modified": "2026-06-01T10:30:00"
+    "post_modified": "2026-06-01T10:30:00",
+    "meta_description": "Guide complet du linking interne."
   }
 ]
 ```
 
 Page-builder behavior: items managed by an unsupported page builder (detected via markers such as `_elementor_data` or `et_pb_`) are excluded from results and reported with a reason, so the rest of the site still ingests.
 
-Meta description: not yet returned. A planned follow-up will have the plugin expose the available meta-description sources per post (Yoast `_yoast_wpseo_metadesc`, Rank Math `rank_math_description`, or the excerpt) so onboarding can let the user pick the source per post type, mirroring the Webflow/Wix meta-description field selection. Until then the LinkerFlow application stores a null meta description for WordPress pages.
+Meta description: each item carries `meta_description`, resolved from the `meta_source` the user picked at onboarding. `yoast` reads `_yoast_wpseo_metadesc`, `rankmath` reads `rank_math_description`, `excerpt` reads `post_excerpt`. SEO-plugin template variables (e.g. `%%title%%`) are expanded when the plugin's helper is available. When the chosen source is empty for a post it falls back to the excerpt, then to null. The available sources are advertised site-wide via `meta_sources` on `GET /post-types`; the crawl passes the selected slug as `meta_source` on `GET /posts`.
 
 ### GET /count
 

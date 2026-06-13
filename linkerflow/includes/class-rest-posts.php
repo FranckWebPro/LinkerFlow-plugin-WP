@@ -65,6 +65,7 @@ class LinkerFlow_REST_Posts {
 		$page          = max( 1, (int) $request->get_param( 'page' ) );
 		$per_page      = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
 		$modified_after = sanitize_text_field( (string) $request->get_param( 'modified_after' ) );
+		$meta_source   = sanitize_key( $request->get_param( 'meta_source' ) );
 
 		$args = array(
 			'post_type'      => $post_type,
@@ -107,6 +108,7 @@ class LinkerFlow_REST_Posts {
 				'locale'       => $this->get_locale( $post->ID ),
 				'post_content' => $post->post_content,
 				'post_modified' => $post->post_modified,
+				'meta_description' => $this->resolve_meta_description( $post, $meta_source ),
 			);
 		}
 
@@ -244,6 +246,49 @@ class LinkerFlow_REST_Posts {
 		return null !== rest_parse_date( sanitize_text_field( (string) $value ) );
 	}
 
+	public function validate_meta_source( $value, $request = null, $param = '' ) {
+		if ( null === $value || '' === $value ) {
+			return true;
+		}
+
+		return in_array( sanitize_key( $value ), array( 'yoast', 'rankmath', 'excerpt' ), true );
+	}
+
+	// Resolves a post's meta description from the source LinkerFlow selected at onboarding
+	// (Yoast or Rank Math post meta, or the WordPress excerpt). SEO plugins can store
+	// template variables (e.g. %%title%%) in the field; expand them when the plugin helper
+	// is available, otherwise return the raw stored value. Falls back to the excerpt when
+	// the chosen source is empty for a given post, then to null.
+	private function resolve_meta_description( WP_Post $post, $source ) {
+		$value = '';
+
+		switch ( $source ) {
+			case 'yoast':
+				$value = (string) get_post_meta( $post->ID, '_yoast_wpseo_metadesc', true );
+				if ( '' !== $value && function_exists( 'wpseo_replace_vars' ) ) {
+					$value = wpseo_replace_vars( $value, $post );
+				}
+				break;
+			case 'rankmath':
+				$value = (string) get_post_meta( $post->ID, 'rank_math_description', true );
+				if ( '' !== $value && class_exists( '\\RankMath\\Helper' ) ) {
+					$value = \RankMath\Helper::replace_vars( $value, $post );
+				}
+				break;
+			case 'excerpt':
+				$value = (string) $post->post_excerpt;
+				break;
+		}
+
+		$value = trim( wp_strip_all_tags( $value ) );
+
+		if ( '' === $value && 'excerpt' !== $source ) {
+			$value = trim( wp_strip_all_tags( (string) $post->post_excerpt ) );
+		}
+
+		return '' !== $value ? $value : null;
+	}
+
 	private function is_supported_post_type( string $post_type ) {
 		return in_array( $post_type, $this->get_supported_post_types(), true );
 	}
@@ -289,6 +334,12 @@ class LinkerFlow_REST_Posts {
 				'type'              => 'string',
 				'sanitize_callback' => 'sanitize_text_field',
 				'validate_callback' => array( $this, 'validate_modified_after' ),
+			),
+			'meta_source'    => array(
+				'required'          => false,
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_key',
+				'validate_callback' => array( $this, 'validate_meta_source' ),
 			),
 		);
 	}
