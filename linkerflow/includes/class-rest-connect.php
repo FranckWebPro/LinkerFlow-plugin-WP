@@ -17,11 +17,6 @@ class LinkerFlow_REST_Connect {
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
 					),
-					'state'  => array(
-						'required'          => true,
-						'type'              => 'string',
-						'sanitize_callback' => 'sanitize_text_field',
-					),
 					'secret' => array(
 						'required'          => true,
 						'type'              => 'string',
@@ -35,16 +30,12 @@ class LinkerFlow_REST_Connect {
 
 	public function handle( WP_REST_Request $request ) {
 		$provided_nonce = $request->get_param( 'nonce' );
-		$provided_state = $request->get_param( 'state' );
 		$stored_nonce   = get_option( LinkerFlow_Admin::NONCE_OPTION );
-		$stored_state   = get_option( LinkerFlow_Admin::STATE_OPTION );
 		$expiry         = (int) get_option( LinkerFlow_Admin::NONCE_EXPIRY_OPTION, 0 );
 
 		if (
 			! $stored_nonce ||
-			! $stored_state ||
 			! hash_equals( $stored_nonce, $provided_nonce ) ||
-			! hash_equals( $stored_state, $provided_state ) ||
 			time() > $expiry
 		) {
 			return new WP_Error(

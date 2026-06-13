@@ -53,7 +53,7 @@ class LinkerFlow_Admin {
 					);
 					?>
 				</p>
-				<form method="post" action="">
+				<form method="post" action="" target="_blank">
 					<?php wp_nonce_field( 'linkerflow_connect', 'linkerflow_wp_nonce' ); ?>
 					<input type="hidden" name="linkerflow_action" value="connect">
 					<?php submit_button( __( 'Connect to LinkerFlow', 'linkerflow' ) ); ?>

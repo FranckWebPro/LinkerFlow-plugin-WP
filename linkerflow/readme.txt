@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 6.5
-Stable tag: 1.1.0
+Stable tag: 1.0.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -73,11 +73,9 @@ Deleting the plugin removes the stored LinkerFlow service secret and connection 
 
 == Changelog ==
 
-= 1.1.0 =
-
-* Expose detected meta-description sources (Yoast SEO, Rank Math, excerpt) on the post-types endpoint.
-* Return a per-post meta description on the posts endpoint, resolved from the selected source with an excerpt fallback.
-
 = 1.0.0 =
 
 * Initial WordPress.org-ready release.
+* Expose detected meta-description sources (Yoast SEO, Rank Math, excerpt) on the post-types endpoint.
+* Return a per-post meta description on the posts endpoint, resolved from the selected source with an excerpt fallback.
+* The /connect endpoint is gated by the one-time nonce; the state token guards the browser redirect (CSRF) and is verified by LinkerFlow, matching the documented contract.

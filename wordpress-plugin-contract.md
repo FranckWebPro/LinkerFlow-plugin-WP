@@ -9,6 +9,10 @@ This document is the frozen interface contract between the LinkerFlow WordPress 
 - **Content format:** WordPress native HTML (`post_content`), including Gutenberg block markup
 - **Plugin targets:** WordPress 6.5+, PHP 7.4+, no external dependencies (WordPress core APIs only)
 
+## Build and release
+
+This is the plugin source repo (`LinkerFlow-WP/`). The two shipped zips are build artifacts and must never be edited directly. To release a change: edit the source under `linkerflow/`, bump the version in `linkerflow.php` (the `Version:` header and `LINKERFLOW_VERSION`) and `readme.txt` (`Stable tag` plus a changelog entry), run `./build.sh`, then copy `linkerflow.zip` to the app repo's `public/linkerflow-wp.zip` and `linkerflow-test.zip` to `public/linkerflow-wp-test.zip`. `build.sh` swaps only the `APP_CONNECT_URL` constant per build (prod `app.linkerflow.io`, test `staging.linkerflow.io`) and restores the source to the prod default afterward; that constant is the sole difference between the two zips. This contract file exists in both the plugin repo and the app repo and must be kept in sync.
+
 ## Scope and guarantees
 
 The plugin only ever:
