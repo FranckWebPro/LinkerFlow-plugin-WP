@@ -2,14 +2,21 @@
 /**
  * Plugin Name: LinkerFlow
  * Plugin URI:  https://www.linkerflow.io
- * Description: Connect your WordPress site to LinkerFlow for automated internal linking.
+ * Description: Connect WordPress to the LinkerFlow service for approved internal-link management.
  * Version:     1.0.0
  * Author:      LinkerFlow
  * Author URI:  https://www.linkerflow.io
  * License:     GPL-2.0-or-later
+ * License URI: https://www.gnu.org/licenses/gpl-2.0.html
  * Text Domain: linkerflow
  * Requires at least: 6.5
  * Requires PHP: 7.4
+ */
+
+/*
+ * The LinkerFlow WordPress plugin source code is licensed under the GNU
+ * General Public License as published by the Free Software Foundation, either
+ * version 2 of the License, or any later version.
  */
 
 defined( 'ABSPATH' ) || exit;

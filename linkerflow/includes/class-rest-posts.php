@@ -31,6 +31,7 @@ class LinkerFlow_REST_Posts {
 						'required'          => false,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_key',
+						'validate_callback' => array( $this, 'validate_public_post_type' ),
 					),
 				),
 			)
@@ -50,8 +51,9 @@ class LinkerFlow_REST_Posts {
 						'sanitize_callback' => 'absint',
 					),
 					'post_content' => array(
-						'required' => true,
-						'type'     => 'string',
+						'required'          => true,
+						'type'              => 'string',
+						'sanitize_callback' => 'wp_kses_post',
 					),
 				),
 			)
@@ -62,7 +64,7 @@ class LinkerFlow_REST_Posts {
 		$post_type     = sanitize_key( $request->get_param( 'post_type' ) );
 		$page          = max( 1, (int) $request->get_param( 'page' ) );
 		$per_page      = max( 1, min( 100, (int) $request->get_param( 'per_page' ) ) );
-		$modified_after = $request->get_param( 'modified_after' );
+		$modified_after = sanitize_text_field( (string) $request->get_param( 'modified_after' ) );
 
 		$args = array(
 			'post_type'      => $post_type,
@@ -70,13 +72,15 @@ class LinkerFlow_REST_Posts {
 			'posts_per_page' => $per_page,
 			'paged'          => $page,
 			'no_found_rows'  => false,
+			'has_password'   => false,
 		);
 
 		if ( $modified_after ) {
+			$modified_timestamp = rest_parse_date( $modified_after );
 			$args['date_query'] = array(
 				array(
 					'column' => 'post_modified',
-					'after'  => $modified_after,
+					'after'  => gmdate( 'Y-m-d H:i:s', $modified_timestamp ),
 				),
 			);
 		}
@@ -119,10 +123,7 @@ class LinkerFlow_REST_Posts {
 		$published  = 0;
 
 		foreach ( $post_types as $type ) {
-			$counts = wp_count_posts( $type );
-			if ( isset( $counts->publish ) ) {
-				$published += (int) $counts->publish;
-			}
+			$published += $this->count_public_posts( $type );
 		}
 
 		return rest_ensure_response( array( 'published' => $published ) );
@@ -132,10 +133,10 @@ class LinkerFlow_REST_Posts {
 		$id   = (int) $request->get_param( 'id' );
 		$post = get_post( $id );
 
-		if ( ! $post || 'publish' !== $post->post_status ) {
+		if ( ! $post || 'publish' !== $post->post_status || $post->post_password || ! $this->is_supported_post_type( $post->post_type ) ) {
 			return new WP_Error(
 				'linkerflow_not_found',
-				'Post not found.',
+				__( 'Post not found.', 'linkerflow' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -153,8 +154,7 @@ class LinkerFlow_REST_Posts {
 		$result = wp_update_post(
 			array(
 				'ID'           => $id,
-				// wp_update_post expects raw content; kses applied internally based on user cap.
-				'post_content' => wp_kses_post( $request->get_param( 'post_content' ) ),
+				'post_content' => $request->get_param( 'post_content' ),
 			),
 			true
 		);
@@ -183,13 +183,13 @@ class LinkerFlow_REST_Posts {
 	private function page_builder_reason( WP_Post $post ) {
 		foreach ( self::PAGE_BUILDER_META as $meta_key ) {
 			if ( get_post_meta( $post->ID, $meta_key, true ) ) {
-				return 'Content managed by Elementor.';
+				return __( 'Content managed by Elementor.', 'linkerflow' );
 			}
 		}
 
 		foreach ( self::PAGE_BUILDER_CONTENT_MARKERS as $marker ) {
 			if ( false !== strpos( $post->post_content, $marker ) ) {
-				return 'Content managed by an unsupported page builder.';
+				return __( 'Content managed by an unsupported page builder.', 'linkerflow' );
 			}
 		}
 
@@ -228,11 +228,48 @@ class LinkerFlow_REST_Posts {
 		);
 	}
 
+	public function validate_public_post_type( $value, $request = null, $param = '' ) {
+		if ( null === $value || '' === $value ) {
+			return true;
+		}
+
+		return $this->is_supported_post_type( sanitize_key( $value ) );
+	}
+
+	public function validate_modified_after( $value, $request = null, $param = '' ) {
+		if ( null === $value || '' === $value ) {
+			return true;
+		}
+
+		return null !== rest_parse_date( sanitize_text_field( (string) $value ) );
+	}
+
+	private function is_supported_post_type( string $post_type ) {
+		return in_array( $post_type, $this->get_supported_post_types(), true );
+	}
+
+	private function count_public_posts( string $post_type ) {
+		$query = new WP_Query(
+			array(
+				'post_type'      => $post_type,
+				'post_status'    => 'publish',
+				'posts_per_page' => 1,
+				'fields'         => 'ids',
+				'no_found_rows'  => false,
+				'has_password'   => false,
+			)
+		);
+
+		return (int) $query->found_posts;
+	}
+
 	private function list_args() {
 		return array(
 			'post_type'      => array(
-				'required' => true,
-				'type'     => 'string',
+				'required'          => true,
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_key',
+				'validate_callback' => array( $this, 'validate_public_post_type' ),
 			),
 			'page'           => array(
 				'required' => false,
@@ -248,8 +285,10 @@ class LinkerFlow_REST_Posts {
 				'maximum'  => 100,
 			),
 			'modified_after' => array(
-				'required' => false,
-				'type'     => 'string',
+				'required'          => false,
+				'type'              => 'string',
+				'sanitize_callback' => 'sanitize_text_field',
+				'validate_callback' => array( $this, 'validate_modified_after' ),
 			),
 		);
 	}

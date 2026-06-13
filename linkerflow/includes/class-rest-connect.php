@@ -13,12 +13,20 @@ class LinkerFlow_REST_Connect {
 				'permission_callback' => '__return_true',
 				'args'                => array(
 					'nonce'  => array(
-						'required' => true,
-						'type'     => 'string',
+						'required'          => true,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
+					'state'  => array(
+						'required'          => true,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
 					),
 					'secret' => array(
-						'required' => true,
-						'type'     => 'string',
+						'required'          => true,
+						'type'              => 'string',
+						'minLength'         => 32,
+						'sanitize_callback' => 'sanitize_text_field',
 					),
 				),
 			)
@@ -27,18 +35,31 @@ class LinkerFlow_REST_Connect {
 
 	public function handle( WP_REST_Request $request ) {
 		$provided_nonce = $request->get_param( 'nonce' );
+		$provided_state = $request->get_param( 'state' );
 		$stored_nonce   = get_option( LinkerFlow_Admin::NONCE_OPTION );
+		$stored_state   = get_option( LinkerFlow_Admin::STATE_OPTION );
 		$expiry         = (int) get_option( LinkerFlow_Admin::NONCE_EXPIRY_OPTION, 0 );
 
 		if (
 			! $stored_nonce ||
+			! $stored_state ||
 			! hash_equals( $stored_nonce, $provided_nonce ) ||
+			! hash_equals( $stored_state, $provided_state ) ||
 			time() > $expiry
 		) {
 			return new WP_Error(
 				'linkerflow_unauthorized',
-				'Invalid or missing credential.',
+				__( 'Invalid or missing credential.', 'linkerflow' ),
 				array( 'status' => 401 )
+			);
+		}
+
+		$secret = $request->get_param( 'secret' );
+		if ( strlen( $secret ) < 32 ) {
+			return new WP_Error(
+				'linkerflow_invalid_secret',
+				__( 'Invalid or missing credential.', 'linkerflow' ),
+				array( 'status' => 400 )
 			);
 		}
 
@@ -47,7 +68,6 @@ class LinkerFlow_REST_Connect {
 		delete_option( LinkerFlow_Admin::NONCE_EXPIRY_OPTION );
 		delete_option( LinkerFlow_Admin::STATE_OPTION );
 
-		$secret = sanitize_text_field( $request->get_param( 'secret' ) );
 		LinkerFlow_Auth::store_secret( $secret );
 
 		return rest_ensure_response(
