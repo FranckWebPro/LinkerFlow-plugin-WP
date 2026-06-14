@@ -148,6 +148,8 @@ Query params:
 | `modified_after` | no | ISO datetime; returns only items with `post_modified` newer than this (incremental crawl). |
 | `meta_source` | no | A slug from `meta_sources` (`yoast`, `rankmath`, `excerpt`). Selects which field each item's `meta_description` is read from. Omitted = `meta_description` is null. |
 
+Multilingual behavior: when WPML or Polylang is active, results span every language (each item carries its `locale`), not just the site default language, so the application can segment posts per language. The site default language is used when neither plugin is active. Only subdirectory language URLs are supported; subdomain and separate-domain configurations are treated as separate sites.
+
 Response `200` (array; pagination in headers):
 
 ```json
@@ -172,7 +174,14 @@ Meta description: each item carries `meta_description`, resolved from the `meta_
 
 ### GET /count
 
-Returns the aggregated count of published, non-password-protected items so the LinkerFlow application does not page through everything just to size the site.
+Returns the count of published, non-password-protected items so the LinkerFlow application does not page through everything just to size the site.
+
+Query params:
+
+| Param | Required | Description |
+|---|---|---|
+| `post_type` | no | A slug from `GET /post-types`. Omitted = all supported public post types. |
+| `lang` | no | A language slug from `GET /languages`. When set (WPML/Polylang active), counts only that language; omitted = the site default language. Page limits are per language, so each locale is sized independently. |
 
 Response `200`:
 

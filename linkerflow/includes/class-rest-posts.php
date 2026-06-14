@@ -33,6 +33,11 @@ class LinkerFlow_REST_Posts {
 						'sanitize_callback' => 'sanitize_key',
 						'validate_callback' => array( $this, 'validate_public_post_type' ),
 					),
+					'lang'      => array(
+						'required'          => false,
+						'type'              => 'string',
+						'sanitize_callback' => 'sanitize_text_field',
+					),
 				),
 			)
 		);
@@ -137,7 +142,7 @@ class LinkerFlow_REST_Posts {
 			);
 		}
 
-		$query = new WP_Query( $args );
+		$query = $this->run_language_query( $args, 'all' );
 
 		$total      = (int) $query->found_posts;
 		$total_pages = (int) $query->max_num_pages;
@@ -172,11 +177,12 @@ class LinkerFlow_REST_Posts {
 
 	public function count_posts( WP_REST_Request $request ) {
 		$post_type  = sanitize_key( $request->get_param( 'post_type' ) );
+		$lang       = sanitize_text_field( (string) $request->get_param( 'lang' ) );
 		$post_types = $post_type ? array( $post_type ) : $this->get_supported_post_types();
 		$published  = 0;
 
 		foreach ( $post_types as $type ) {
-			$published += $this->count_public_posts( $type );
+			$published += $this->count_public_posts( $type, $lang );
 		}
 
 		return rest_ensure_response( array( 'published' => $published ) );
@@ -247,6 +253,43 @@ class LinkerFlow_REST_Posts {
 		}
 
 		return null;
+	}
+
+	private function is_polylang_active() {
+		return function_exists( 'pll_languages_list' );
+	}
+
+	private function is_wpml_active() {
+		return defined( 'ICL_SITEPRESS_VERSION' );
+	}
+
+	// Runs a WP_Query honouring a language selector ('' = plugin default, 'all' = every
+	// language, a slug = that language) so secondary translations are indexed, not just the default.
+	private function run_language_query( array $args, string $lang = '' ) {
+		if ( '' === $lang ) {
+			return new WP_Query( $args );
+		}
+
+		if ( $this->is_polylang_active() ) {
+			if ( 'all' === $lang ) {
+				$codes        = pll_languages_list( array( 'fields' => 'slug' ) );
+				$args['lang'] = ( is_array( $codes ) && $codes ) ? implode( ',', $codes ) : '';
+			} else {
+				$args['lang'] = $lang;
+			}
+			return new WP_Query( $args );
+		}
+
+		if ( $this->is_wpml_active() ) {
+			do_action( 'wpml_switch_language', $lang );
+			try {
+				return new WP_Query( $args );
+			} finally {
+				do_action( 'wpml_switch_language', null );
+			}
+		}
+
+		return new WP_Query( $args );
 	}
 
 	// Returns the post's language code (Polylang/WPML slug) or null on a monolingual
@@ -344,8 +387,8 @@ class LinkerFlow_REST_Posts {
 		return in_array( $post_type, $this->get_supported_post_types(), true );
 	}
 
-	private function count_public_posts( string $post_type ) {
-		$query = new WP_Query(
+	private function count_public_posts( string $post_type, string $lang = '' ) {
+		$query = $this->run_language_query(
 			array(
 				'post_type'      => $post_type,
 				'post_status'    => 'publish',
@@ -353,7 +396,8 @@ class LinkerFlow_REST_Posts {
 				'fields'         => 'ids',
 				'no_found_rows'  => false,
 				'has_password'   => false,
-			)
+			),
+			$lang
 		);
 
 		return (int) $query->found_posts;
