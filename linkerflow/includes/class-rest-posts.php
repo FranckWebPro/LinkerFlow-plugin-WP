@@ -41,6 +41,23 @@ class LinkerFlow_REST_Posts {
 			LinkerFlow::NAMESPACE,
 			'/posts/(?P<id>\d+)',
 			array(
+				'methods'             => WP_REST_Server::READABLE,
+				'callback'            => array( $this, 'get_post_content' ),
+				'permission_callback' => array( 'LinkerFlow_Auth', 'permission_callback' ),
+				'args'                => array(
+					'id' => array(
+						'required'          => true,
+						'type'              => 'integer',
+						'sanitize_callback' => 'absint',
+					),
+				),
+			)
+		);
+
+		register_rest_route(
+			LinkerFlow::NAMESPACE,
+			'/posts/(?P<id>\d+)',
+			array(
 				'methods'             => WP_REST_Server::CREATABLE,
 				'callback'            => array( $this, 'update_post' ),
 				'permission_callback' => array( 'LinkerFlow_Auth', 'permission_callback' ),
@@ -56,6 +73,40 @@ class LinkerFlow_REST_Posts {
 						'sanitize_callback' => 'wp_kses_post',
 					),
 				),
+			)
+		);
+	}
+
+	// Returns one published post's current content so LinkerFlow applies a link on top of the
+	// live HTML rather than a possibly-stale crawl snapshot. Same guards as update_post.
+	public function get_post_content( WP_REST_Request $request ) {
+		$id   = (int) $request->get_param( 'id' );
+		$post = get_post( $id );
+
+		if ( ! $post || 'publish' !== $post->post_status || $post->post_password || ! $this->is_supported_post_type( $post->post_type ) ) {
+			return new WP_Error(
+				'linkerflow_not_found',
+				__( 'Post not found.', 'linkerflow' ),
+				array( 'status' => 404 )
+			);
+		}
+
+		$reason = $this->page_builder_reason( $post );
+		if ( $reason ) {
+			return new WP_Error(
+				'linkerflow_read_only',
+				$reason,
+				array( 'status' => 409 )
+			);
+		}
+
+		return rest_ensure_response(
+			array(
+				'id'           => $post->ID,
+				'permalink'    => get_permalink( $post->ID ),
+				'post_content' => $post->post_content,
+				'status'       => $post->post_status,
+				'locale'       => $this->get_locale( $post->ID ),
 			)
 		);
 	}

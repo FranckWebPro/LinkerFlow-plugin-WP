@@ -79,3 +79,4 @@ Deleting the plugin removes the stored LinkerFlow service secret and connection 
 * Expose detected meta-description sources (Yoast SEO, Rank Math, excerpt) on the post-types endpoint.
 * Return a per-post meta description on the posts endpoint, resolved from the selected source with an excerpt fallback.
 * The /connect endpoint is gated by the one-time nonce; the state token guards the browser redirect (CSRF) and is verified by LinkerFlow, matching the documented contract.
+* Add a read endpoint for a single published post so LinkerFlow applies internal links on top of the live content instead of a stale snapshot, preserving edits made in the WordPress editor.

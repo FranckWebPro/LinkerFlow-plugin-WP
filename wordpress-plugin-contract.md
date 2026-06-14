@@ -180,6 +180,18 @@ Response `200`:
 { "published": 318 }
 ```
 
+### GET /posts/{id}
+
+Returns the current `post_content` for one published, non-password-protected item so the LinkerFlow application applies a link on top of the live content rather than a stale crawl snapshot. Same guards as the write endpoint.
+
+Response `200`:
+
+```json
+{ "id": 42, "permalink": "https://example.com/guide/", "post_content": "<!-- wp:paragraph --><p>...</p><!-- /wp:paragraph -->", "status": "publish", "locale": "fr" }
+```
+
+Errors: `404` (item not found / unpublished / password-protected / unsupported type), `409` (read-only, e.g. page-builder content).
+
 ### POST /posts/{id}
 
 Writes updated `post_content` for one published, non-password-protected item. Used to publish, edit, remove, and batch-fix internal links. The update goes live immediately and creates a WordPress revision when revisions are enabled for the post type.
