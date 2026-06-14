@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 6.5
-Stable tag: 1.1.0
+Stable tag: 1.0.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,11 +72,6 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
 
 == Changelog ==
-
-= 1.1.0 =
-
-* Index all languages on WPML and Polylang sites: the posts endpoint now returns every translation, not only the site default language, so internal linking covers each language.
-* The count endpoint accepts a `lang` parameter and sizes each language independently, matching the per-language page limit.
 
 = 1.0.0 =
 
