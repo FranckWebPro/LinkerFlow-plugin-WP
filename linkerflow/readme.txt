@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 6.5
-Stable tag: 1.0.0
+Stable tag: 1.1.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,6 +72,12 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
 
 == Changelog ==
+
+= 1.1.0 =
+
+* Support Elementor and Divi pages. Content is read as HTML from the builder's widgets or shortcodes, and approved internal links are written back into the originating text widget or text module without overwriting the rest of the layout.
+* Surface builder button and call-to-action links on read so the LinkerFlow link graph sees internal navigation built with the page builder.
+* Pages built with still-unsupported builders (WPBakery, Avada Fusion) remain excluded.
 
 = 1.0.0 =
 

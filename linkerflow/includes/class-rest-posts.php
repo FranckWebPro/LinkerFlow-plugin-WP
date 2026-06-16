@@ -3,9 +3,14 @@ defined( 'ABSPATH' ) || exit;
 
 class LinkerFlow_REST_Posts {
 
-	// Page-builder markers detected in post meta or content.
-	const PAGE_BUILDER_META = array( '_elementor_data', '_elementor_edit_mode' );
-	const PAGE_BUILDER_CONTENT_MARKERS = array( 'et_pb_', '[vc_row', '[fusion_builder' );
+	private $builders;
+
+	private function builders() {
+		if ( ! $this->builders ) {
+			$this->builders = new LinkerFlow_Page_Builders();
+		}
+		return $this->builders;
+	}
 
 	public function register() {
 		register_rest_route(
@@ -96,11 +101,11 @@ class LinkerFlow_REST_Posts {
 			);
 		}
 
-		$reason = $this->page_builder_reason( $post );
-		if ( $reason ) {
+		$type = $this->builders()->detect( $post );
+		if ( LinkerFlow_Page_Builders::TYPE_UNSUPPORTED === $type ) {
 			return new WP_Error(
 				'linkerflow_read_only',
-				$reason,
+				__( 'Content managed by an unsupported page builder.', 'linkerflow' ),
 				array( 'status' => 409 )
 			);
 		}
@@ -109,7 +114,7 @@ class LinkerFlow_REST_Posts {
 			array(
 				'id'           => $post->ID,
 				'permalink'    => get_permalink( $post->ID ),
-				'post_content' => $post->post_content,
+				'post_content' => $this->builders()->read_html( $post, $type ),
 				'status'       => $post->post_status,
 				'locale'       => $this->get_locale( $post->ID ),
 			)
@@ -149,8 +154,8 @@ class LinkerFlow_REST_Posts {
 
 		$items = array();
 		foreach ( $query->posts as $post ) {
-			$reason = $this->page_builder_reason( $post );
-			if ( $reason ) {
+			$type = $this->builders()->detect( $post );
+			if ( LinkerFlow_Page_Builders::TYPE_UNSUPPORTED === $type ) {
 				// Excluded; skip without breaking ingestion.
 				continue;
 			}
@@ -162,7 +167,7 @@ class LinkerFlow_REST_Posts {
 				'post_type'    => $post->post_type,
 				'status'       => $post->post_status,
 				'locale'       => $this->get_locale( $post->ID ),
-				'post_content' => $post->post_content,
+				'post_content' => $this->builders()->read_html( $post, $type ),
 				'post_modified' => $post->post_modified,
 				'meta_description' => $this->resolve_meta_description( $post, $meta_source ),
 			);
@@ -200,13 +205,25 @@ class LinkerFlow_REST_Posts {
 			);
 		}
 
-		// Guard: refuse to overwrite page-builder content.
-		$reason = $this->page_builder_reason( $post );
-		if ( $reason ) {
+		$type = $this->builders()->detect( $post );
+		if ( LinkerFlow_Page_Builders::TYPE_UNSUPPORTED === $type ) {
 			return new WP_Error(
 				'linkerflow_read_only',
-				$reason,
+				__( 'Content managed by an unsupported page builder.', 'linkerflow' ),
 				array( 'status' => 409 )
+			);
+		}
+
+		// Elementor/Divi pages route through the translator: the anchor diff is pushed back into
+		// the originating widget or shortcode, never overwriting the whole document.
+		if ( $this->builders()->is_supported( $type ) ) {
+			$this->builders()->write_html( $post, $type, $request->get_param( 'post_content' ) );
+			return rest_ensure_response(
+				array(
+					'id'          => $id,
+					'updated'     => true,
+					'revision_id' => null,
+				)
 			);
 		}
 
@@ -237,22 +254,6 @@ class LinkerFlow_REST_Posts {
 				'revision_id' => $revision_id,
 			)
 		);
-	}
-
-	private function page_builder_reason( WP_Post $post ) {
-		foreach ( self::PAGE_BUILDER_META as $meta_key ) {
-			if ( get_post_meta( $post->ID, $meta_key, true ) ) {
-				return __( 'Content managed by Elementor.', 'linkerflow' );
-			}
-		}
-
-		foreach ( self::PAGE_BUILDER_CONTENT_MARKERS as $marker ) {
-			if ( false !== strpos( $post->post_content, $marker ) ) {
-				return __( 'Content managed by an unsupported page builder.', 'linkerflow' );
-			}
-		}
-
-		return null;
 	}
 
 	private function is_polylang_active() {

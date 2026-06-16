@@ -13,6 +13,21 @@
 set -euo pipefail
 cd "$(dirname "$0")"
 
+# Refuse to build a zip with a PHP syntax error in it. Skipped (with a warning) when
+# php is not installed, so the build still works on machines without a PHP CLI.
+if command -v php >/dev/null 2>&1; then
+  while IFS= read -r f; do
+    if ! php -l "$f" >/dev/null 2>&1; then
+      echo "PHP lint failed, aborting build:"
+      php -l "$f"
+      exit 1
+    fi
+  done < <(find linkerflow -name '*.php')
+  echo "PHP lint OK"
+else
+  echo "WARNING: php not found, skipping PHP lint"
+fi
+
 PROD_URL='https://app.linkerflow.io/api/wordpress/connect'
 TEST_URL="${LINKERFLOW_TEST_URL:-https://staging.linkerflow.io/api/wordpress/connect}"
 ADMIN='linkerflow/includes/class-admin.php'
