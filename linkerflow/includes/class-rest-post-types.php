@@ -20,7 +20,7 @@ class LinkerFlow_REST_Post_Types {
 
 		$result = array();
 		foreach ( $post_types as $type ) {
-			if ( 'attachment' === $type->name ) {
+			if ( LinkerFlow::is_excluded_post_type( $type->name ) ) {
 				continue;
 			}
 

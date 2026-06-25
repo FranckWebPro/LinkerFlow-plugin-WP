@@ -95,6 +95,8 @@ This is the only unauthenticated endpoint (it bootstraps the credential); it is 
 
 Lists the public content types available to manage. Used by LinkerFlow onboarding so the user can choose what to connect.
 
+Page-builder and WordPress-internal post types that are `public` but not editorial content are excluded from the list (and from crawl validation), so they never appear as selectable collections: `attachment`, Elementor (`elementor_library`, `e-floating-buttons`, `e-landing-page`), Divi layout templates (`et_pb_layout`, `et_template`, `et_header_layout`, `et_footer_layout`, `et_body_layout`), and block/template types (`wp_block`, `wp_template`, `wp_template_part`, `wp_navigation`). The deny list is filterable via the `linkerflow_excluded_post_types` WordPress filter.
+
 The response also reports `meta_sources`: the meta-description sources detected on the site. SEO plugins store the description per post site-wide, so onboarding surfaces a single meta-source selector rather than a per-collection field. `yoast` is present when Yoast SEO is active (`WPSEO_VERSION`), `rankmath` when Rank Math is active (`RANK_MATH_VERSION`), and `excerpt` is always offered last. SEO plugins are listed first so the first entry is the sensible default.
 
 Response `200`:
@@ -181,7 +183,7 @@ Query params:
 | Param | Required | Description |
 |---|---|---|
 | `post_type` | no | A slug from `GET /post-types`. Omitted = all supported public post types. |
-| `lang` | no | A language slug from `GET /languages`. When set (WPML/Polylang active), counts only that language; omitted = the site default language. Page limits are per language, so each locale is sized independently. |
+| `lang` | no | A language slug from `GET /languages`. When set (WPML/Polylang active), counts only that language. Omitted means **no language filter**: in a REST context WPML/Polylang count posts across all languages, which inflates a multilingual primary count, so the application passes the default language slug explicitly for the primary locale and never relies on the omitted default. Omit it only for monolingual sites (one language = the whole site). Page limits are per language, so each locale is sized independently. |
 
 Response `200`:
 

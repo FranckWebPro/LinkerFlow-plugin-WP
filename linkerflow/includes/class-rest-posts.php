@@ -319,7 +319,7 @@ class LinkerFlow_REST_Posts {
 			array_filter(
 				$post_types,
 				function ( $post_type ) {
-					return 'attachment' !== $post_type;
+					return ! LinkerFlow::is_excluded_post_type( $post_type );
 				}
 			)
 		);

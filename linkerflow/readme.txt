@@ -2,8 +2,8 @@
 Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
-Tested up to: 6.5
-Stable tag: 1.1.0
+Tested up to: 6.8.1
+Stable tag: 1.0.0
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -73,12 +73,6 @@ Deleting the plugin removes the stored LinkerFlow service secret and connection 
 
 == Changelog ==
 
-= 1.1.0 =
-
-* Support Elementor and Divi pages. Content is read as HTML from the builder's widgets or shortcodes, and approved internal links are written back into the originating text widget or text module without overwriting the rest of the layout.
-* Surface builder button and call-to-action links on read so the LinkerFlow link graph sees internal navigation built with the page builder.
-* Pages built with still-unsupported builders (WPBakery, Avada Fusion) remain excluded.
-
 = 1.0.0 =
 
 * Initial WordPress.org-ready release.
@@ -86,3 +80,7 @@ Deleting the plugin removes the stored LinkerFlow service secret and connection 
 * Return a per-post meta description on the posts endpoint, resolved from the selected source with an excerpt fallback.
 * The /connect endpoint is gated by the one-time nonce; the state token guards the browser redirect (CSRF) and is verified by LinkerFlow, matching the documented contract.
 * Add a read endpoint for a single published post so LinkerFlow applies internal links on top of the live content instead of a stale snapshot, preserving edits made in the WordPress editor.
+* Support Elementor and Divi pages. Content is read as HTML from the builder's widgets or shortcodes, and approved internal links are written back into the originating text widget or text module without overwriting the rest of the layout.
+* Surface builder button and call-to-action links on read so the LinkerFlow link graph sees internal navigation built with the page builder.
+* Pages built with still-unsupported builders (WPBakery, Avada Fusion) remain excluded.
+* Exclude page-builder and WordPress internal post types (Elementor library, floating buttons, landing pages, Divi layout templates, block and template parts) from the selectable collection list and from crawling. Only editorial content types are offered.
