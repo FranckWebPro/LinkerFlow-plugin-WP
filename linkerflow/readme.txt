@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 1.0.0
+Stable tag: 1.0.1
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -24,7 +24,7 @@ This plugin connects to the LinkerFlow software-as-a-service application operate
 
 The plugin requires a LinkerFlow account and an active LinkerFlow service plan to provide internal-link management. The GPL license applies to this WordPress plugin's source code, not to the separately operated LinkerFlow SaaS application or service plan.
 
-The site owner initiates the connection from WP Admin. During connection, the plugin redirects the browser to the LinkerFlow application with the site URL, a one-time nonce, and a state token. The LinkerFlow application then confirms the connection by sending the nonce, state token, and a generated shared secret to this site's REST API. After connection, the LinkerFlow service uses that secret to authenticate future API requests.
+The site owner initiates the connection from WP Admin. During connection, the plugin redirects the browser to the LinkerFlow application with the site URL, a one-time nonce, and a state token. The LinkerFlow application then confirms the connection by sending the nonce and a generated shared secret to this site's REST API. After connection, the LinkerFlow service uses that secret to authenticate future API requests.
 
 Data sent to or accessed by the LinkerFlow service may include:
 
@@ -72,6 +72,12 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
 
 == Changelog ==
+
+= 1.0.1 =
+
+* Exclude Divi 5 block-based pages from ingestion and writes until a block translator exists; only Divi 4 shortcode pages are supported.
+* Return a 422 error when a page-builder write finds no matching text block, instead of reporting a successful update.
+* Compare the incremental-crawl `modified_after` filter against `post_modified_gmt` so site timezone settings never shift the window.
 
 = 1.0.0 =
 

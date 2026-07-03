@@ -139,12 +139,14 @@ class LinkerFlow_REST_Posts {
 
 		if ( $modified_after ) {
 			$modified_timestamp = rest_parse_date( $modified_after );
-			$args['date_query'] = array(
-				array(
-					'column' => 'post_modified',
-					'after'  => gmdate( 'Y-m-d H:i:s', $modified_timestamp ),
-				),
-			);
+			if ( false !== $modified_timestamp ) {
+				$args['date_query'] = array(
+					array(
+						'column' => 'post_modified_gmt',
+						'after'  => gmdate( 'Y-m-d H:i:s', $modified_timestamp ),
+					),
+				);
+			}
 		}
 
 		$query = $this->run_language_query( $args, 'all' );
@@ -217,7 +219,13 @@ class LinkerFlow_REST_Posts {
 		// Elementor/Divi pages route through the translator: the anchor diff is pushed back into
 		// the originating widget or shortcode, never overwriting the whole document.
 		if ( $this->builders()->is_supported( $type ) ) {
-			$this->builders()->write_html( $post, $type, $request->get_param( 'post_content' ) );
+			if ( ! $this->builders()->write_html( $post, $type, $request->get_param( 'post_content' ) ) ) {
+				return new WP_Error(
+					'linkerflow_not_applied',
+					__( 'No matching builder text block for the requested change.', 'linkerflow' ),
+					array( 'status' => 422 )
+				);
+			}
 			return rest_ensure_response(
 				array(
 					'id'          => $id,

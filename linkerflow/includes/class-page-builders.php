@@ -13,27 +13,34 @@ class LinkerFlow_Page_Builders {
 	const TYPE_UNSUPPORTED = 'unsupported';
 
 	// Markers for builders we cannot yet translate; their posts stay excluded.
-	const UNSUPPORTED_MARKERS = array( '[vc_row', '[fusion_builder' );
+	// Divi 5 stores block-based layouts (`divi/*` blocks), not Divi 4 shortcodes,
+	// so it is excluded until a block translator exists.
+	const UNSUPPORTED_MARKERS = array( '[vc_row', '[fusion_builder', '<!-- wp:divi/' );
 
 	// Elementor widget types whose body text LinkerFlow may link into.
 	const ELEMENTOR_LINKABLE = array( 'text-editor' );
 
 	// Returns 'elementor', 'divi', 'unsupported', or '' for native (Gutenberg/Classic) content.
 	public function detect( WP_Post $post ) {
+		foreach ( self::UNSUPPORTED_MARKERS as $marker ) {
+			if ( false !== strpos( $post->post_content, $marker ) ) {
+				return self::TYPE_UNSUPPORTED;
+			}
+		}
+
 		if ( 'builder' === get_post_meta( $post->ID, '_elementor_edit_mode', true )
 			&& '' !== (string) get_post_meta( $post->ID, '_elementor_data', true ) ) {
 			return self::TYPE_ELEMENTOR;
 		}
 
-		if ( false !== strpos( $post->post_content, '[et_pb_section' )
-			|| 'on' === get_post_meta( $post->ID, '_et_pb_use_builder', true ) ) {
+		if ( false !== strpos( $post->post_content, '[et_pb_section' ) ) {
 			return self::TYPE_DIVI;
 		}
 
-		foreach ( self::UNSUPPORTED_MARKERS as $marker ) {
-			if ( false !== strpos( $post->post_content, $marker ) ) {
-				return self::TYPE_UNSUPPORTED;
-			}
+		// Divi builder enabled but no Divi 4 shortcodes: Divi 5 block content the
+		// shortcode translator cannot handle.
+		if ( 'on' === get_post_meta( $post->ID, '_et_pb_use_builder', true ) ) {
+			return self::TYPE_UNSUPPORTED;
 		}
 
 		return '';
