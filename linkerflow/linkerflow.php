@@ -3,7 +3,7 @@
  * Plugin Name: LinkerFlow
  * Plugin URI:  https://www.linkerflow.io
  * Description: Connect WordPress to the LinkerFlow service for approved internal-link management.
- * Version:     1.0.1
+ * Version:     1.0.2
  * Author:      LinkerFlow
  * Author URI:  https://www.linkerflow.io
  * License:     GPL-2.0-or-later
@@ -21,7 +21,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LINKERFLOW_VERSION', '1.0.1' );
+define( 'LINKERFLOW_VERSION', '1.0.2' );
 define( 'LINKERFLOW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LINKERFLOW_URL', plugin_dir_url( __FILE__ ) );
 

@@ -170,6 +170,8 @@ Response `200` (array; pagination in headers):
 ]
 ```
 
+`title` is plain text: the plugin strips any HTML tags from `post_title` before returning it (since 1.0.2). The app additionally strips tags when mapping `title` to `name`/`seo_title` as a defense against older plugin versions.
+
 Page-builder behavior: Elementor and Divi 4 (shortcode format) pages are supported. The plugin flattens their content to HTML on read (Elementor `text-editor` widgets and Divi `[et_pb_text]` modules, plus headings and builder button/call-to-action links so the link graph sees builder-built navigation) and writes approved links back into the originating text widget or text module via an anchor diff, never overwriting the rest of the layout. Elementor writes update the `_elementor_data` post meta and flush the Elementor CSS cache; Divi writes update `post_content` and clear the Divi static CSS cache. Pages built with a still-unsupported builder (WPBakery `[vc_row`, Avada `[fusion_builder`, Divi 5 block format `<!-- wp:divi/` or Divi builder enabled without Divi 4 shortcodes) are excluded from results and reported with a reason, so the rest of the site still ingests.
 
 Meta description: each item carries `meta_description`, resolved from the `meta_source` the user picked at onboarding. `yoast` reads `_yoast_wpseo_metadesc`, `rankmath` reads `rank_math_description`, `excerpt` reads `post_excerpt`. SEO-plugin template variables (e.g. `%%title%%`) are expanded when the plugin's helper is available. When the chosen source is empty for a post it falls back to the excerpt, then to null. The available sources are advertised site-wide via `meta_sources` on `GET /post-types`; the crawl passes the selected slug as `meta_source` on `GET /posts`.

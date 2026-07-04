@@ -165,7 +165,7 @@ class LinkerFlow_REST_Posts {
 			$items[] = array(
 				'id'           => $post->ID,
 				'permalink'    => get_permalink( $post->ID ),
-				'title'        => $post->post_title,
+				'title'        => wp_strip_all_tags( $post->post_title ),
 				'post_type'    => $post->post_type,
 				'status'       => $post->post_status,
 				'locale'       => $this->get_locale( $post->ID ),
