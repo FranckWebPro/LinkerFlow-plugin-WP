@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 1.0.2
+Stable tag: 1.0.4
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,6 +72,14 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
 
 == Changelog ==
+
+= 1.0.4 =
+
+* Fix a Divi display issue where publishing a link could briefly break the styling of the last module in a row. The static CSS refresh now targets only the edited page instead of clearing every page's cached CSS at once.
+
+= 1.0.3 =
+
+* Add a "Reconnect to LinkerFlow" button on the admin screen when the site is already connected, so the connection can be refreshed if it looks disconnected or links stop publishing.
 
 = 1.0.2 =
 

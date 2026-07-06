@@ -415,7 +415,7 @@ class LinkerFlow_Page_Builders {
 
 	private function flush_divi_css( $post_id ) {
 		if ( class_exists( '\\ET_Core_PageResource' ) && method_exists( '\\ET_Core_PageResource', 'remove_static_resources' ) ) {
-			\ET_Core_PageResource::remove_static_resources( 'all', 'all' );
+			\ET_Core_PageResource::remove_static_resources( $post_id, 'all' );
 		}
 	}
 }

@@ -38,6 +38,12 @@ class LinkerFlow_Admin {
 
 			<?php if ( $connected ) : ?>
 				<p><?php esc_html_e( 'Your site is connected to the LinkerFlow service.', 'linkerflow' ); ?></p>
+				<p><?php esc_html_e( 'If the site looks disconnected inside LinkerFlow, or links are not publishing, reconnect to refresh the connection. If everything is already working, this changes nothing.', 'linkerflow' ); ?></p>
+				<form method="post" action="" target="_blank">
+					<?php wp_nonce_field( 'linkerflow_connect', 'linkerflow_wp_nonce' ); ?>
+					<input type="hidden" name="linkerflow_action" value="connect">
+					<?php submit_button( __( 'Reconnect to LinkerFlow', 'linkerflow' ), 'secondary' ); ?>
+				</form>
 			<?php else : ?>
 				<p><?php esc_html_e( 'Connect your site to the LinkerFlow service to manage approved internal links.', 'linkerflow' ); ?></p>
 				<p>
