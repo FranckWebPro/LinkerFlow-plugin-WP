@@ -251,6 +251,8 @@ class LinkerFlow_REST_Posts {
 			);
 		}
 
+		$this->builders()->flush_caches( $id );
+
 		$revisions   = wp_get_post_revisions( $id );
 		$revision    = $revisions ? array_shift( $revisions ) : null;
 		$revision_id = $revision ? $revision->ID : null;

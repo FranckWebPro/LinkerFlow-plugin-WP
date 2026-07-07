@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 1.0.4
+Stable tag: 1.0.5
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -72,6 +72,10 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
 
 == Changelog ==
+
+= 1.0.5 =
+
+* Fix a Divi styling issue that could persist after publishing a link. Cache clearing now also drops the Divi Dynamic Assets cache for the edited page and purges the full-page cache (WP Rocket, including Remove Unused CSS, plus Cloudflare and host caches) so the page no longer serves stale markup or CSS until it is re-saved.
 
 = 1.0.4 =
 

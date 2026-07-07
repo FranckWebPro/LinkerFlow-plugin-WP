@@ -170,6 +170,7 @@ class LinkerFlow_Page_Builders {
 		update_post_meta( $post->ID, '_linkerflow_elementor_backup', wp_slash( wp_json_encode( $backup ) ) );
 		update_post_meta( $post->ID, '_elementor_data', wp_slash( wp_json_encode( $data ) ) );
 		$this->flush_elementor_css( $post->ID );
+		$this->flush_page_caches( $post->ID );
 		return true;
 	}
 
@@ -291,6 +292,7 @@ class LinkerFlow_Page_Builders {
 		}
 
 		$this->flush_divi_css( $post->ID );
+		$this->flush_page_caches( $post->ID );
 		return true;
 	}
 
@@ -414,8 +416,60 @@ class LinkerFlow_Page_Builders {
 	}
 
 	private function flush_divi_css( $post_id ) {
+		// Static CSS file: force = true so a generation lock cannot skip the removal.
 		if ( class_exists( '\\ET_Core_PageResource' ) && method_exists( '\\ET_Core_PageResource', 'remove_static_resources' ) ) {
-			\ET_Core_PageResource::remove_static_resources( $post_id, 'all' );
+			\ET_Core_PageResource::remove_static_resources( $post_id, 'all', true );
+		}
+
+		// Dynamic Assets / Dynamic Module Framework: the per-module CSS component files
+		// under et-cache/{id} are not touched by remove_static_resources, so a stale
+		// manifest can serve a partial stylesheet after a link write. Drop the whole folder.
+		$this->rmdir_recursive( WP_CONTENT_DIR . '/et-cache/' . (int) $post_id );
+	}
+
+	// Public entry point for the native (Gutenberg/Classic) write path, which updates
+	// post_content directly and still needs the page caches purged.
+	public function flush_caches( $post_id ) {
+		$this->flush_page_caches( $post_id );
+	}
+
+	// --- Full-page cache flushing -------------------------------------------
+
+	// A link write changes the rendered HTML, but WP Rocket / Cloudflare / host page
+	// caches keep serving the previous markup (and, with Remove Unused CSS, a stale
+	// inlined stylesheet) until the URL is purged. Each layer is guarded so a missing
+	// plugin is a no-op. Scoped to the single edited post.
+	private function flush_page_caches( $post_id ) {
+		$post_id = (int) $post_id;
+
+		// WP Rocket: purges the cached HTML, the Used CSS (RUCSS) entry, and Cloudflare
+		// through the WP Rocket add-on when enabled.
+		if ( function_exists( 'rocket_clean_post' ) ) {
+			rocket_clean_post( $post_id );
+		}
+
+		// Kinsta and other host/object caches listen on this core hook.
+		clean_post_cache( $post_id );
+
+		// LiteSpeed and any listener on this action; no-op when absent.
+		do_action( 'litespeed_purge_post', $post_id );
+	}
+
+	// Recursively deletes a directory through WP_Filesystem. The path is expected to be
+	// a single et-cache/{id} folder; callers must pass a bounded, plugin-owned path.
+	private function rmdir_recursive( $dir ) {
+		if ( ! is_dir( $dir ) ) {
+			return;
+		}
+
+		global $wp_filesystem;
+		if ( ! $wp_filesystem ) {
+			require_once ABSPATH . 'wp-admin/includes/file.php';
+			WP_Filesystem();
+		}
+
+		if ( $wp_filesystem ) {
+			$wp_filesystem->delete( $dir, true );
 		}
 	}
 }
