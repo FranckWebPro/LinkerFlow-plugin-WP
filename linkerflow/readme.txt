@@ -62,6 +62,10 @@ Data sent to or accessed by the LinkerFlow service may include:
 The service terms are available at https://www.linkerflow.io/terms.
 The privacy policy is available at https://www.linkerflow.io/privacy.
 
+= Source code =
+
+This plugin is open source under the GPLv2 (or later) license. The full source code is available at https://github.com/FranckWebPro/LinkerFlow-plugin-WP.
+
 == Installation ==
 
 1. Upload the plugin files to the `/wp-content/plugins/linkerflow` directory, or install the plugin through the WordPress Plugins screen.

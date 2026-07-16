@@ -17,6 +17,8 @@
  * The LinkerFlow WordPress plugin source code is licensed under the GNU
  * General Public License as published by the Free Software Foundation, either
  * version 2 of the License, or any later version.
+ *
+ * Source code: https://github.com/FranckWebPro/LinkerFlow-plugin-WP
  */
 
 defined( 'ABSPATH' ) || exit;
