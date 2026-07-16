@@ -1,8 +1,8 @@
 <?php
 /**
- * Plugin Name: LinkerFlow
+ * Plugin Name: LinkerFlow - Contextual Internal Linking
  * Plugin URI:  https://www.linkerflow.io
- * Description: Connect WordPress to the LinkerFlow service for approved internal-link management.
+ * Description: Improve your SEO and your user experience through internal link building. Automated links between your posts based on a smart keyword configuration.
  * Version:     1.0.5
  * Author:      LinkerFlow
  * Author URI:  https://www.linkerflow.io

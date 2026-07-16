@@ -42,6 +42,7 @@ class LinkerFlow_REST_Posts {
 						'required'          => false,
 						'type'              => 'string',
 						'sanitize_callback' => 'sanitize_text_field',
+						'validate_callback' => array( $this, 'validate_lang' ),
 					),
 				),
 			)
@@ -292,11 +293,11 @@ class LinkerFlow_REST_Posts {
 		}
 
 		if ( $this->is_wpml_active() ) {
-			do_action( 'wpml_switch_language', $lang );
+			do_action( 'wpml_switch_language', $lang ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML core hook, name defined by WPML.
 			try {
 				return new WP_Query( $args );
 			} finally {
-				do_action( 'wpml_switch_language', null );
+				do_action( 'wpml_switch_language', null ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML core hook, name defined by WPML.
 			}
 		}
 
@@ -313,7 +314,7 @@ class LinkerFlow_REST_Posts {
 		}
 
 		if ( defined( 'ICL_SITEPRESS_VERSION' ) ) {
-			$lang = apply_filters( 'wpml_post_language_details', null, $post_id );
+			$lang = apply_filters( 'wpml_post_language_details', null, $post_id ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML core hook, name defined by WPML.
 			if ( $lang && isset( $lang['language_code'] ) ) {
 				return $lang['language_code'];
 			}
@@ -349,6 +350,28 @@ class LinkerFlow_REST_Posts {
 		}
 
 		return null !== rest_parse_date( sanitize_text_field( (string) $value ) );
+	}
+
+	// Accepts an empty value (no filter) or a slug that matches an active Polylang/WPML
+	// language. On a monolingual site any non-empty slug is rejected.
+	public function validate_lang( $value, $request = null, $param = '' ) {
+		if ( null === $value || '' === $value ) {
+			return true;
+		}
+
+		$slug = sanitize_text_field( (string) $value );
+
+		if ( $this->is_polylang_active() ) {
+			$codes = pll_languages_list( array( 'fields' => 'slug' ) );
+			return is_array( $codes ) && in_array( $slug, $codes, true );
+		}
+
+		if ( $this->is_wpml_active() ) {
+			$languages = apply_filters( 'wpml_active_languages', null ); // phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- WPML core hook, name defined by WPML.
+			return is_array( $languages ) && isset( $languages[ $slug ] );
+		}
+
+		return false;
 	}
 
 	public function validate_meta_source( $value, $request = null, $param = '' ) {

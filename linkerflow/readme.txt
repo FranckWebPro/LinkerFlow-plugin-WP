@@ -8,9 +8,33 @@ Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
 
-Connect WordPress to the LinkerFlow service to manage approved internal links in published content.
+Boost your SEO and user experience with LinkerFlow's contextual internal linking, automating links across your posts via smart keyword configuration.
 
 == Description ==
+
+**LinkerFlow builds smart, contextual internal links between your posts and pages, automatically.** Better internal linking is one of the highest-leverage SEO wins on any site: it spreads link authority across your content, helps search engines discover and rank your pages, and keeps visitors reading longer. LinkerFlow handles it for you, based on a keyword configuration you control.
+
+= Why internal linking matters =
+
+* **Rank higher.** Contextual internal links pass authority to the pages you want to rank and help search engines understand your site structure.
+* **Keep visitors longer.** Relevant links between related articles lower bounce rate and increase page views.
+* **Save hours.** No more manually hunting for linking opportunities across hundreds of posts. LinkerFlow finds and places them for you.
+
+= What LinkerFlow does =
+
+* **Automated contextual links** placed inside your existing content.
+* **Smart keyword configuration** so you decide which terms link to which target pages.
+* **Works on your live content** through authenticated REST endpoints, applying links on top of the current post so your editor changes are preserved.
+* **Page builder support** for Elementor and Divi: links are written back into the originating text widget or module without touching the rest of your layout.
+* **Multilingual ready** with Polylang and WPML, so each language is linked correctly.
+* **SEO plugin aware**, reading meta descriptions from Yoast SEO or Rank Math when available.
+* **Clean and lightweight**: no public "powered by" credit links, no third-party scripts, styles, or tracking pixels loaded on your site.
+
+= How it works =
+
+Install the plugin, connect your site from WP Admin in one click, and configure your keywords in the LinkerFlow application. LinkerFlow then reads your published content and publishes approved internal links through this plugin, using WordPress' native update flow so revisions are kept when enabled.
+
+= Technical overview =
 
 The LinkerFlow WordPress plugin connects your WordPress site to the LinkerFlow service for internal-link management. After you approve the connection, the LinkerFlow service can read published posts, pages, selected public custom post types, permalinks, language information, and post content through authenticated REST API endpoints.
 
@@ -47,6 +71,30 @@ The privacy policy is available at https://www.linkerflow.io/privacy.
 
 == Frequently Asked Questions ==
 
+= What is internal linking and why does it matter? =
+
+An internal link points from one page of your site to another page on the same domain. It is one of the most underrated levers in on-page SEO. Strong internal linking helps search engines discover new content faster, understand how your pages relate to each other, and distribute ranking authority toward the pages that matter most. For readers, it surfaces related articles and keeps them moving through your site. LinkerFlow automates this work so you get the benefit without linking every post by hand.
+
+= Will the plugin slow down my site? =
+
+No. LinkerFlow writes internal links directly into your saved post content, so the links are part of the page like any other link you would add in the editor. There is no extra processing at render time and no runtime index to load, so the plugin adds nothing to your front-end page speed.
+
+= How does LinkerFlow improve my SEO? =
+
+LinkerFlow adds contextual internal links between related posts and pages. Internal linking spreads authority across your content, helps search engines crawl and understand your site, and increases page views by guiding visitors to related articles. You configure which keywords link to which pages, and LinkerFlow places the links automatically.
+
+= Will it change how my content looks? =
+
+Links are inserted inline inside your existing text, matching your content's normal styling. LinkerFlow does not add public "powered by" credits or badges, and it does not overwrite your page-builder layout.
+
+= Does it work with Elementor and Divi? =
+
+Yes. Content is read as HTML from Elementor widgets and Divi shortcodes, and approved links are written back into the originating text widget or module without touching the rest of the layout. Divi 4 shortcode pages are supported.
+
+= Is it compatible with multilingual sites? =
+
+Yes. LinkerFlow works with Polylang and WPML, indexing and linking each language correctly.
+
 = Does this plugin publish links automatically? =
 
 The plugin exposes authenticated endpoints that allow the LinkerFlow service to update published content. Link publication is controlled from the LinkerFlow application.
@@ -69,7 +117,15 @@ No. The plugin does not enqueue remote scripts or styles and does not add tracki
 
 = Can I disconnect the plugin? =
 
-Deleting the plugin removes the stored LinkerFlow service secret and connection tokens. You should also remove or disconnect the site in the LinkerFlow application.
+Deleting the plugin removes the LinkerFlow service secret and connection tokens stored on your site. Without that secret, the LinkerFlow service can no longer authenticate against your site's REST API and loses all access to read or update your content.
+
+== Screenshots ==
+
+1. Connect your WordPress site to the LinkerFlow service in one click from WP Admin.
+2. Configure the keywords that drive contextual internal linking in the LinkerFlow application.
+3. Automated internal links placed inside your published content.
+4. Elementor and Divi support: links written back into the builder without breaking the layout.
+5. Multilingual linking with Polylang and WPML.
 
 == Changelog ==
 
