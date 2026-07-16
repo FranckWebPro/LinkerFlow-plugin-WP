@@ -2,7 +2,7 @@
 /**
  * Plugin Name: LinkerFlow - Contextual Internal Linking
  * Plugin URI:  https://www.linkerflow.io
- * Description: Improve your SEO and your user experience through internal link building. Automated links between your posts based on a smart keyword configuration.
+ * Description: Improve your SEO and your user experience through internal link building. Automated links between your posts, fix broken links and other link health issues.
  * Version:     1.0.5
  * Author:      LinkerFlow
  * Author URI:  https://www.linkerflow.io
