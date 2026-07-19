@@ -97,7 +97,7 @@ class LinkerFlow_REST_Posts {
 		if ( ! $post || 'publish' !== $post->post_status || $post->post_password || ! $this->is_supported_post_type( $post->post_type ) ) {
 			return new WP_Error(
 				'linkerflow_not_found',
-				__( 'Post not found.', 'linkerflow' ),
+				__( 'Post not found.', 'linkerflow-internal-linking-for-seo' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -106,7 +106,7 @@ class LinkerFlow_REST_Posts {
 		if ( LinkerFlow_Page_Builders::TYPE_UNSUPPORTED === $type ) {
 			return new WP_Error(
 				'linkerflow_read_only',
-				__( 'Content managed by an unsupported page builder.', 'linkerflow' ),
+				__( 'Content managed by an unsupported page builder.', 'linkerflow-internal-linking-for-seo' ),
 				array( 'status' => 409 )
 			);
 		}
@@ -203,7 +203,7 @@ class LinkerFlow_REST_Posts {
 		if ( ! $post || 'publish' !== $post->post_status || $post->post_password || ! $this->is_supported_post_type( $post->post_type ) ) {
 			return new WP_Error(
 				'linkerflow_not_found',
-				__( 'Post not found.', 'linkerflow' ),
+				__( 'Post not found.', 'linkerflow-internal-linking-for-seo' ),
 				array( 'status' => 404 )
 			);
 		}
@@ -212,7 +212,7 @@ class LinkerFlow_REST_Posts {
 		if ( LinkerFlow_Page_Builders::TYPE_UNSUPPORTED === $type ) {
 			return new WP_Error(
 				'linkerflow_read_only',
-				__( 'Content managed by an unsupported page builder.', 'linkerflow' ),
+				__( 'Content managed by an unsupported page builder.', 'linkerflow-internal-linking-for-seo' ),
 				array( 'status' => 409 )
 			);
 		}
@@ -223,7 +223,7 @@ class LinkerFlow_REST_Posts {
 			if ( ! $this->builders()->write_html( $post, $type, $request->get_param( 'post_content' ) ) ) {
 				return new WP_Error(
 					'linkerflow_not_applied',
-					__( 'No matching builder text block for the requested change.', 'linkerflow' ),
+					__( 'No matching builder text block for the requested change.', 'linkerflow-internal-linking-for-seo' ),
 					array( 'status' => 422 )
 				);
 			}

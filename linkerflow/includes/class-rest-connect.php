@@ -40,7 +40,7 @@ class LinkerFlow_REST_Connect {
 		) {
 			return new WP_Error(
 				'linkerflow_unauthorized',
-				__( 'Invalid or missing credential.', 'linkerflow' ),
+				__( 'Invalid or missing credential.', 'linkerflow-internal-linking-for-seo' ),
 				array( 'status' => 401 )
 			);
 		}
@@ -49,7 +49,7 @@ class LinkerFlow_REST_Connect {
 		if ( strlen( $secret ) < 32 ) {
 			return new WP_Error(
 				'linkerflow_invalid_secret',
-				__( 'Invalid or missing credential.', 'linkerflow' ),
+				__( 'Invalid or missing credential.', 'linkerflow-internal-linking-for-seo' ),
 				array( 'status' => 400 )
 			);
 		}
