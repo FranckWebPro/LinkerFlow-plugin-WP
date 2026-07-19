@@ -1,7 +1,7 @@
 <?php
 /**
  * Plugin Name: LinkerFlow - Internal Linking for SEO
- * Plugin URI:  https://www.linkerflow.io
+ * Plugin URI:  https://github.com/FranckWebPro/LinkerFlow-plugin-WP
  * Description: Improve your site's ranking (SEO) and your user experience with automated internal link building. Fix broken links and health issues in one click.
  * Version:     1.0.5
  * Author:      LinkerFlow
