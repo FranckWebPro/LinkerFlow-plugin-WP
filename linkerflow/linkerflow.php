@@ -8,7 +8,7 @@
  * Author URI:  https://www.linkerflow.io
  * License:     GPL-2.0-or-later
  * License URI: https://www.gnu.org/licenses/gpl-2.0.html
- * Text Domain: linkerflow-internal-linking-for-seo
+ * Text Domain: linkerflow
  * Requires at least: 6.5
  * Requires PHP: 7.4
  */

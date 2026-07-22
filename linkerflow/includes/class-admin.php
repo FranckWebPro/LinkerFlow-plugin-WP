@@ -20,8 +20,8 @@ class LinkerFlow_Admin {
 
 	public static function add_menu() {
 		add_menu_page(
-			__( 'LinkerFlow', 'linkerflow-internal-linking-for-seo' ),
-			__( 'LinkerFlow', 'linkerflow-internal-linking-for-seo' ),
+			__( 'LinkerFlow', 'linkerflow' ),
+			__( 'LinkerFlow', 'linkerflow' ),
 			'manage_options',
 			'linkerflow',
 			array( __CLASS__, 'render_page' ),
@@ -34,24 +34,24 @@ class LinkerFlow_Admin {
 		$connected = LinkerFlow_Auth::is_connected();
 		?>
 		<div class="wrap">
-			<h1><?php esc_html_e( 'LinkerFlow', 'linkerflow-internal-linking-for-seo' ); ?></h1>
+			<h1><?php esc_html_e( 'LinkerFlow', 'linkerflow' ); ?></h1>
 
 			<?php if ( $connected ) : ?>
-				<p><?php esc_html_e( 'Your site is connected to the LinkerFlow service.', 'linkerflow-internal-linking-for-seo' ); ?></p>
-				<p><?php esc_html_e( 'If the site looks disconnected inside LinkerFlow, or links are not publishing, reconnect to refresh the connection. If everything is already working, this changes nothing.', 'linkerflow-internal-linking-for-seo' ); ?></p>
+				<p><?php esc_html_e( 'Your site is connected to the LinkerFlow service.', 'linkerflow' ); ?></p>
+				<p><?php esc_html_e( 'If the site looks disconnected inside LinkerFlow, or links are not publishing, reconnect to refresh the connection. If everything is already working, this changes nothing.', 'linkerflow' ); ?></p>
 				<form method="post" action="" target="_blank">
 					<?php wp_nonce_field( 'linkerflow_connect', 'linkerflow_wp_nonce' ); ?>
 					<input type="hidden" name="linkerflow_action" value="connect">
-					<?php submit_button( __( 'Reconnect to LinkerFlow', 'linkerflow-internal-linking-for-seo' ), 'secondary' ); ?>
+					<?php submit_button( __( 'Reconnect to LinkerFlow', 'linkerflow' ), 'secondary' ); ?>
 				</form>
 			<?php else : ?>
-				<p><?php esc_html_e( 'Connect your site to the LinkerFlow service to manage approved internal links.', 'linkerflow-internal-linking-for-seo' ); ?></p>
+				<p><?php esc_html_e( 'Connect your site to the LinkerFlow service to manage approved internal links.', 'linkerflow' ); ?></p>
 				<p>
 					<?php
 					echo wp_kses(
 						sprintf(
 							/* translators: 1: privacy policy URL, 2: terms URL. */
-							__( 'By connecting, you allow the LinkerFlow service to read published content and update approved internal links through this plugin. Review the <a href="%1$s" target="_blank" rel="noopener noreferrer">privacy policy</a> and <a href="%2$s" target="_blank" rel="noopener noreferrer">terms of use</a>.', 'linkerflow-internal-linking-for-seo' ),
+							__( 'By connecting, you allow the LinkerFlow service to read published content and update approved internal links through this plugin. Review the <a href="%1$s" target="_blank" rel="noopener noreferrer">privacy policy</a> and <a href="%2$s" target="_blank" rel="noopener noreferrer">terms of use</a>.', 'linkerflow' ),
 							esc_url( self::PRIVACY_URL ),
 							esc_url( self::TERMS_URL )
 						),
@@ -62,7 +62,7 @@ class LinkerFlow_Admin {
 				<form method="post" action="" target="_blank">
 					<?php wp_nonce_field( 'linkerflow_connect', 'linkerflow_wp_nonce' ); ?>
 					<input type="hidden" name="linkerflow_action" value="connect">
-					<?php submit_button( __( 'Connect to LinkerFlow', 'linkerflow-internal-linking-for-seo' ) ); ?>
+					<?php submit_button( __( 'Connect to LinkerFlow', 'linkerflow' ) ); ?>
 				</form>
 			<?php endif; ?>
 		</div>
@@ -102,7 +102,7 @@ class LinkerFlow_Admin {
 			! current_user_can( 'manage_options' ) ||
 			! check_admin_referer( 'linkerflow_connect', 'linkerflow_wp_nonce' )
 		) {
-			wp_die( esc_html__( 'Permission denied.', 'linkerflow-internal-linking-for-seo' ) );
+			wp_die( esc_html__( 'Permission denied.', 'linkerflow' ) );
 		}
 
 		$nonce  = wp_generate_uuid4();
@@ -141,11 +141,11 @@ class LinkerFlow_Admin {
 			return;
 		}
 
-		$content = '<p>' . esc_html__( 'When you connect this site to the LinkerFlow service, the plugin sends the site URL and a one-time connection token to the LinkerFlow application. After connection, the LinkerFlow service can authenticate to this site with a shared secret to read published posts, pages, selected public custom post types, permalinks, language information, and post content. The LinkerFlow service can also update post content through this plugin to publish approved internal links. The plugin does not send WordPress user accounts, passwords, comments, private posts, drafts, settings, or unrelated plugin data.', 'linkerflow-internal-linking-for-seo' ) . '</p>';
+		$content = '<p>' . esc_html__( 'When you connect this site to the LinkerFlow service, the plugin sends the site URL and a one-time connection token to the LinkerFlow application. After connection, the LinkerFlow service can authenticate to this site with a shared secret to read published posts, pages, selected public custom post types, permalinks, language information, and post content. The LinkerFlow service can also update post content through this plugin to publish approved internal links. The plugin does not send WordPress user accounts, passwords, comments, private posts, drafts, settings, or unrelated plugin data.', 'linkerflow' ) . '</p>';
 		$content .= '<p>' . wp_kses(
 			sprintf(
 				/* translators: 1: privacy policy URL, 2: terms URL. */
-				__( 'For more information, review the LinkerFlow <a href="%1$s">privacy policy</a> and <a href="%2$s">terms of use</a>.', 'linkerflow-internal-linking-for-seo' ),
+				__( 'For more information, review the LinkerFlow <a href="%1$s">privacy policy</a> and <a href="%2$s">terms of use</a>.', 'linkerflow' ),
 				esc_url( self::PRIVACY_URL ),
 				esc_url( self::TERMS_URL )
 			),

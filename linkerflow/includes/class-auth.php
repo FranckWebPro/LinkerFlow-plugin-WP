@@ -10,7 +10,7 @@ class LinkerFlow_Auth {
 		if ( ! $secret ) {
 			return new WP_Error(
 				'linkerflow_unauthorized',
-				__( 'Invalid or missing credential.', 'linkerflow-internal-linking-for-seo' ),
+				__( 'Invalid or missing credential.', 'linkerflow' ),
 				array( 'status' => 401 )
 			);
 		}
@@ -19,7 +19,7 @@ class LinkerFlow_Auth {
 		if ( ! $header || strpos( $header, 'Bearer ' ) !== 0 ) {
 			return new WP_Error(
 				'linkerflow_unauthorized',
-				__( 'Invalid or missing credential.', 'linkerflow-internal-linking-for-seo' ),
+				__( 'Invalid or missing credential.', 'linkerflow' ),
 				array( 'status' => 401 )
 			);
 		}
@@ -28,7 +28,7 @@ class LinkerFlow_Auth {
 		if ( ! hash_equals( $secret, $provided ) ) {
 			return new WP_Error(
 				'linkerflow_unauthorized',
-				__( 'Invalid or missing credential.', 'linkerflow-internal-linking-for-seo' ),
+				__( 'Invalid or missing credential.', 'linkerflow' ),
 				array( 'status' => 401 )
 			);
 		}

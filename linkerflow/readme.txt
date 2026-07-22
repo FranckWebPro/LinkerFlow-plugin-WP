@@ -1,4 +1,4 @@
-=== LinkerFlow - Internal Linking for SEO ===
+=== LinkerFlow ===
 Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
