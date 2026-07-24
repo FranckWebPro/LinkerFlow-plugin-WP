@@ -452,6 +452,7 @@ class LinkerFlow_Page_Builders {
 		clean_post_cache( $post_id );
 
 		// LiteSpeed and any listener on this action; no-op when absent.
+		// phpcs:ignore WordPress.NamingConventions.PrefixAllGlobals.NonPrefixedHooknameFound -- native LiteSpeed Cache hook name, not ours to prefix.
 		do_action( 'litespeed_purge_post', $post_id );
 	}
 

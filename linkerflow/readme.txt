@@ -3,7 +3,7 @@ Contributors: linkerflow
 Tags: internal links, seo, content, automation, rest api
 Requires at least: 6.5
 Tested up to: 7.0
-Stable tag: 1.0.5
+Stable tag: 1.0.6
 Requires PHP: 7.4
 License: GPLv2 or later
 License URI: https://www.gnu.org/licenses/gpl-2.0.html
@@ -132,6 +132,10 @@ Deleting the plugin removes the LinkerFlow service secret and connection tokens 
 5. Multilingual linking with Polylang and WPML.
 
 == Changelog ==
+
+= 1.0.6 =
+
+* Internal code-standards compliance for the LiteSpeed cache-purge hook. No functional change.
 
 = 1.0.5 =
 

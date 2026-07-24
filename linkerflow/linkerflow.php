@@ -3,7 +3,7 @@
  * Plugin Name: LinkerFlow - Internal Linking for SEO
  * Plugin URI:  https://github.com/FranckWebPro/LinkerFlow-plugin-WP
  * Description: Improve your site's ranking (SEO) and your user experience with automated internal link building. Fix broken links and health issues in one click.
- * Version:     1.0.5
+ * Version:     1.0.6
  * Author:      LinkerFlow
  * Author URI:  https://www.linkerflow.io
  * License:     GPL-2.0-or-later
@@ -23,7 +23,7 @@
 
 defined( 'ABSPATH' ) || exit;
 
-define( 'LINKERFLOW_VERSION', '1.0.5' );
+define( 'LINKERFLOW_VERSION', '1.0.6' );
 define( 'LINKERFLOW_DIR', plugin_dir_path( __FILE__ ) );
 define( 'LINKERFLOW_URL', plugin_dir_url( __FILE__ ) );
 
